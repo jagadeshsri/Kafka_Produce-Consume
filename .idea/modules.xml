@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/kafka_new.iml" filepath="$PROJECT_DIR$/.idea/kafka_new.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kakfa-producer-consumer-example/kakfa-producer-consumer-example.iml" filepath="$PROJECT_DIR$/kakfa-producer-consumer-example/kakfa-producer-consumer-example.iml" />
+    </modules>
+  </component>
+</project>
