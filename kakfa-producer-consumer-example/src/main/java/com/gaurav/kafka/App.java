@@ -1,10 +1,22 @@
 package com.gaurav.kafka;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
-
+import com.fasterxml.jackson.core.*;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.node.JsonNodeType;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.gaurav.kafka.pojo.Data;
+import com.gaurav.kafka.pojo.JSONNodeSerializer;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -16,7 +28,7 @@ import com.gaurav.kafka.producer.ProducerCreator;
 public class App {
 	public static void main(String[] args) {
 		runProducer();
-//		runConsumer();
+	//	runConsumer();
 	}
 
 	static void runConsumer() {
@@ -25,7 +37,7 @@ public class App {
 		int noMessageToFetch = 0;
 
 		while (true) {
-			final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
+			final ConsumerRecords<Long, String> consumerRecords = consumer.poll(Duration.ofMillis( 1000));
 			if (consumerRecords.count() == 0) {
 				noMessageToFetch++;
 				if (noMessageToFetch > IKafkaConstants.MAX_NO_MESSAGE_FOUND_COUNT)
@@ -46,11 +58,13 @@ public class App {
 	}
 
 	static void runProducer() {
-		Producer<String, String> producer = ProducerCreator.createProducer();
+		Producer<Integer,Data> producer = ProducerCreator.createProducer();
 
-		for (int index = 10; index < 10+IKafkaConstants.MESSAGE_COUNT; index++) {
-			final ProducerRecord<String, String> record = new ProducerRecord<>(IKafkaConstants.TOPIC_NAME,1,
-					"Key:" + index, "This is record " + index);
+		while(true) {
+			Random rand = new Random();
+			Integer index =  rand.nextInt(100);
+			Data data = new Data(index);
+			final ProducerRecord<Integer, Data> record = new ProducerRecord(IKafkaConstants.TOPIC_NAME,0,null,data);
 			try {
 				RecordMetadata metadata = producer.send(record).get();
 				System.out.println("Record sent with key " + index + " to partition " + metadata.partition()
